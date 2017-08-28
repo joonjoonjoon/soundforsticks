@@ -27,7 +27,7 @@ if(args.p) peak = parseFloat(args.p);
 if(args.s) segments = parseInt(args.s);
 
 // parse decimals
-if(args.d) decimals = parseInt(args.d);
+if(args.d !== null) decimals = parseInt(args.d);
 
 var options = {"ffmpegPath": ffmpegPath, "numOfSample" : segments};
 waveform.getWaveForm( file, options, function(error, peaks){
@@ -42,10 +42,10 @@ waveform.getWaveForm( file, options, function(error, peaks){
 	console.log("Crude visualizer:")
 	console.log("-------------------");
 	console.log("");
-	for (var index = 0; index < 10; index++) {
+	for (var index = 0; index < Math.round(peak); index++) {
 		var line ="";
 		for (var index2 = 0; index2 < peaks.length; index2++) {
-			if(peaks[index2] > 1-(index / 10))
+			if(peaks[index2] > 1-(index / Math.round(peak)))
 				line += "■";
 			else	
 				line += "_";
@@ -59,7 +59,9 @@ waveform.getWaveForm( file, options, function(error, peaks){
 	console.log("-------------------");
 	for (var index = 0; index < peaks.length; index++) {
 		var val = peaks[index] * peak;
-		console.log("["+(index+1)+"] "+'\t'+val.toFixed(decimals));
+		var valstring = val.toFixed(decimals);
+		if(decimals == 0) valstring = Math.round(val);
+		console.log("["+(index+1)+"] "+'\t'+valstring);
 	}
 
 	// export data as CSV
@@ -69,7 +71,9 @@ waveform.getWaveForm( file, options, function(error, peaks){
 	var result ="";
 	for (var index = 0; index < peaks.length; index++) {
 		var val = peaks[index] * peak;
-		result += val.toFixed(decimals);
+		var valstring = val.toFixed(decimals);
+		if(decimals == 0) valstring = Math.round(val);
+		result += valstring
 		if(index < peaks.length - 1) result += delimiter;
 	}
 	console.log(result);
