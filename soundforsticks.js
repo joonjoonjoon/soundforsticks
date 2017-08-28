@@ -77,6 +77,7 @@ waveform.getWaveForm( file, options, function(error, peaks){
 	console.log("CSV:")
 	console.log("-------------------");
 	var result ="";
+	if(!delimiter) delimiter =";";		// weird hack not sure why I need this...
 	for (var index = 0; index < peaks.length; index++) {
 		result += peaks[index]
 		if(index < peaks.length - 1) result += delimiter;
