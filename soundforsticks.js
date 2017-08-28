@@ -8,12 +8,12 @@ var file = __dirname + './hello.mp3'; 	// default use the test file
 var peak = 1;
 var segments = 24;
 var decimals = 3;
-var delimiter = ';';
+var delimiter = ";";
 // parse args
 if(args.f) file = args.f;
 else { 
-	console.log("usage: node soundforsticks.js -f [mp3 file path] -p [peak]  -s [segments] -d [decimals] -del [delimiter]" + '\n' +
-		"example: node soundforsticks.js -f myfile.mp3 -p 1.5 -s 64 -d 3 -del ,");
+	console.log("usage: node soundforsticks.js -f [mp3 file path] -p [peak]  -s [segments] -d [decimals] -x [delimiter]" + '\n' +
+		"example: node soundforsticks.js -f myfile.mp3 -p 1.5 -s 64 -d 3 -x ,");
 }
 var fs = require('fs');
 if (fs.existsSync(file)) {
@@ -21,13 +21,17 @@ if (fs.existsSync(file)) {
 }
 
 // parse peak
-if(args.p) peak = parseFloat(args.p);
+if(args.p !== null) peak = parseFloat(args.p);
 
 // parse segments
-if(args.s) segments = parseInt(args.s);
+if(args.s !== null) segments = parseInt(args.s);
 
 // parse decimals
 if(args.d !== null) decimals = parseInt(args.d);
+
+// parse delimiter
+if(args.x !== null) delimiter = args.x;
+console.log(args);
 
 var options = {"ffmpegPath": ffmpegPath, "numOfSample" : segments};
 waveform.getWaveForm( file, options, function(error, peaks){
@@ -52,16 +56,20 @@ waveform.getWaveForm( file, options, function(error, peaks){
 		}
 		console.log(line);
 	}
+	
+	// make value strings nice (proper decimal count)
+	for (var index = 0; index < peaks.length; index++) {
+		var val = peaks[index] * peak;
+		var valstring = val.toFixed(decimals);
+		peaks[index] = valstring;
+	};
 
-	// export data for spreadshset
+	// export data for spreadsheet
 	console.log("");
 	console.log("Spreadsheet export:")
 	console.log("-------------------");
 	for (var index = 0; index < peaks.length; index++) {
-		var val = peaks[index] * peak;
-		var valstring = val.toFixed(decimals);
-		if(decimals == 0) valstring = Math.round(val);
-		console.log("["+(index+1)+"] "+'\t'+valstring);
+		console.log("["+(index+1)+"] "+'\t'+peaks[index]);
 	}
 
 	// export data as CSV
@@ -70,12 +78,14 @@ waveform.getWaveForm( file, options, function(error, peaks){
 	console.log("-------------------");
 	var result ="";
 	for (var index = 0; index < peaks.length; index++) {
-		var val = peaks[index] * peak;
-		var valstring = val.toFixed(decimals);
-		if(decimals == 0) valstring = Math.round(val);
-		result += valstring
+		result += peaks[index]
 		if(index < peaks.length - 1) result += delimiter;
 	}
 	console.log(result);
+	
+	console.log("");
+	console.log("JSON:")
+	console.log("-----");
+	console.log(JSON.stringify(peaks));
 });
 
