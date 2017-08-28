@@ -1,0 +1,16 @@
+{
+  "name": "soundforsticks",
+  "version": "1.0.0",
+  "description": "make an mp3 into an array of peak-heights, based on volume readings",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "joon",
+  "license": "ISC",
+  "dependencies": {
+    "ffmpeg-binaries": "^3.2.2-3",
+    "minimist": "^1.2.0",
+    "waveform-node": "git+https://github.com/phding/waveform-node.git"
+  }
+}
