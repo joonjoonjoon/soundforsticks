@@ -4,7 +4,7 @@ var ffmpegPath = ffmpegBinaries.ffmpegPath() // Path to ffmpeg binary
 var args = require('minimist')(process.argv.slice(2));
 console.dir(args);
 
-var file = __dirname + './hello.mp3'; 	// default use the test file
+var file = __dirname + '/hello.mp3'; 	// default use the test file
 var peak = 1;
 var segments = 24;
 var decimals = 3;
