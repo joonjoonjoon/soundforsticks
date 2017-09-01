@@ -5,10 +5,11 @@ var args = require('minimist')(process.argv.slice(2));
 console.dir(args);
 
 var file = __dirname + '/hello.mp3'; 	// default use the test file
-var peak = 1;
+var peak = 10;
 var segments = 24;
 var decimals = 3;
 var delimiter = ";";
+
 // parse args
 if(args.f) file = args.f;
 else { 
@@ -21,19 +22,22 @@ if (fs.existsSync(file)) {
 }
 
 // parse peak
-if(args.p !== null) peak = parseFloat(args.p);
+if(args.p && args.p !== null) peak = parseFloat(args.p);
 
 // parse segments
-if(args.s !== null) segments = parseInt(args.s);
+if(args.s && args.s !== null) segments = parseInt(args.s);
 
 // parse decimals
-if(args.d !== null) decimals = parseInt(args.d);
+if(args.d && args.d !== null) decimals = parseInt(args.d);
 
 // parse delimiter
-if(args.x !== null) delimiter = args.x;
-console.log(args);
+if(args.x && args.x !== null) delimiter = args.x;
 
-var options = {"ffmpegPath": ffmpegPath, "numOfSample" : segments};
+var options = {
+	ffmpegPath: ffmpegPath, 
+	numOfSample : segments, 
+	waveformType : waveform.waveformType.STACK
+};
 waveform.getWaveForm( file, options, function(error, peaks){
 	if(error){
 		console.log("ERROR:");
@@ -49,13 +53,30 @@ waveform.getWaveForm( file, options, function(error, peaks){
 	for (var index = 0; index < Math.round(peak); index++) {
 		var line ="";
 		for (var index2 = 0; index2 < peaks.length; index2++) {
-			if(peaks[index2] > 1-(index / Math.round(peak)))
-				line += "■";
+			if(Math.pow(peaks[index2],1) > 1-(index / Math.round(peak)))
+			//if(1-Math.log(1/peaks[index2]) > 1-(index / Math.round(peak)))
+				line += "█";
 			else	
-				line += "_";
+				line += " ";
 		}
 		console.log(line);
 	}
+	var linebreak = "";
+	for (var index2 = 0; index2 < peaks.length; index2++) {
+		linebreak += "█";
+	}
+	console.log(linebreak);
+	for (var index = 1; index < Math.round(peak); index++) {
+		var line ="";
+		for (var index2 = 0; index2 < peaks.length; index2++) {
+			if(Math.pow(peaks[index2],1) > (index / Math.round(peak)))
+			//if(1-Math.log(1/peaks[index2]) > (index / Math.round(peak)))
+				line += "█";
+			else	
+				line += " ";
+		}
+		console.log(line);
+	}	
 	
 	// make value strings nice (proper decimal count)
 	for (var index = 0; index < peaks.length; index++) {
@@ -64,6 +85,7 @@ waveform.getWaveForm( file, options, function(error, peaks){
 		peaks[index] = valstring;
 	};
 
+	/*
 	// export data for spreadsheet
 	console.log("");
 	console.log("Spreadsheet export:")
@@ -71,6 +93,7 @@ waveform.getWaveForm( file, options, function(error, peaks){
 	for (var index = 0; index < peaks.length; index++) {
 		console.log("["+(index+1)+"] "+'\t'+peaks[index]);
 	}
+	*/
 
 	// export data as CSV
 	console.log("");
@@ -88,5 +111,6 @@ waveform.getWaveForm( file, options, function(error, peaks){
 	console.log("JSON:")
 	console.log("-----");
 	console.log(JSON.stringify(peaks));
+	
 });
 
