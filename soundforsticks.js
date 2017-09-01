@@ -53,7 +53,7 @@ waveform.getWaveForm( file, options, function(error, peaks){
 	for (var index = 0; index < Math.round(peak); index++) {
 		var line ="";
 		for (var index2 = 0; index2 < peaks.length; index2++) {
-			if(Math.pow(peaks[index2],1) > 1-(index / Math.round(peak)))
+			if(Math.pow(peaks[index2],3) > 1-(index / Math.round(peak)))
 			//if(1-Math.log(1/peaks[index2]) > 1-(index / Math.round(peak)))
 				line += "█";
 			else	
@@ -69,7 +69,7 @@ waveform.getWaveForm( file, options, function(error, peaks){
 	for (var index = 1; index < Math.round(peak); index++) {
 		var line ="";
 		for (var index2 = 0; index2 < peaks.length; index2++) {
-			if(Math.pow(peaks[index2],1) > (index / Math.round(peak)))
+			if(Math.pow(peaks[index2],3) > (index / Math.round(peak)))
 			//if(1-Math.log(1/peaks[index2]) > (index / Math.round(peak)))
 				line += "█";
 			else	
